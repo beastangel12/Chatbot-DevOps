@@ -1,0 +1,7 @@
+node_modules
+*.log
+*.tfstate
+*.tfstate.*
+.terraform
+.vagrant
+*.pem

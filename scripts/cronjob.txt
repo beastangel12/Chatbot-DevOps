@@ -1,0 +1,1 @@
+0 22 * * * /home/ubuntu/Chatbot-DevOps/scripts/backup.sh >> /var/log/backup.log 2>&1
