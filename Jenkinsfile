@@ -13,7 +13,7 @@ pipeline {
         stage('Push to Docker Hub') {
             when { branch 'staging' }
             steps {
-                bat 'docker login -u angelbista -p <your-docker-password>'
+                bat 'docker login -u angelbista -p IMTxBeastOp123@'
                 bat 'docker push %DOCKERHUB_USER%/chatbot:staging'
             }
         }
