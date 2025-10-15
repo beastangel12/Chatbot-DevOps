@@ -10,7 +10,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                bat "docker build -t %DOCKERHUB_USER%/chatbot:staging ."
+                sh "docker build -t %DOCKERHUB_USER%/chatbot:staging ."
             }
         }
 
@@ -21,7 +21,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', 
                                                  usernameVariable: 'USER', 
                                                  passwordVariable: 'PASS')]) {
-                    bat 'docker login -u %USER% -p %PASS%'
+                    sh 'docker login -u %USER% -p %PASS%'
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline {
             when { branch 'staging' }
             steps {
                 echo "Pushing Docker image to Docker Hub..."
-                bat "docker push %DOCKERHUB_USER%/chatbot:staging"
+                sh "docker push %DOCKERHUB_USER%/chatbot:staging"
             }
         }
     }
