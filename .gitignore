@@ -5,3 +5,4 @@ node_modules
 .terraform
 .vagrant
 *.pem
+jenkins_home/

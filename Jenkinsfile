@@ -1,49 +1,23 @@
 pipeline {
-    agent any
-
-    environment {
-        DOCKERHUB_USER = "angelbista"
-        IMAGE = "${DOCKERHUB_USER}/chatbot"
+  agent any
+  environment {
+    DOCKERHUB_USER = "angelbista"
+    IMAGE = "${DOCKERHUB_USER}/chatbot"
+  }
+  stages {
+    stage('Build') {
+      steps {
+        sh 'docker build -t $IMAGE:staging .'
+      }
     }
-
-    stages {
-        stage('Build Docker Image') {
-            steps {
-                echo "Building Docker image..."
-                sh "docker build -t %DOCKERHUB_USER%/chatbot:staging ."
-            }
+    stage('Push to Docker Hub') {
+      when { branch 'staging' }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh 'echo $PASS | docker login -u $USER --password-stdin'
+          sh 'docker push $IMAGE:staging'
         }
-
-        stage('Login to Docker Hub') {
-            when { branch 'staging' }
-            steps {
-                echo "Logging into Docker Hub..."
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', 
-                                                 usernameVariable: 'USER', 
-                                                 passwordVariable: 'PASS')]) {
-                    sh 'docker login -u %USER% -p %PASS%'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            when { branch 'staging' }
-            steps {
-                echo "Pushing Docker image to Docker Hub..."
-                sh "docker push %DOCKERHUB_USER%/chatbot:staging"
-            }
-        }
+      }
     }
-
-    post {
-        always {
-            echo "Pipeline finished."
-        }
-        failure {
-            echo "Pipeline failed. Check logs."
-        }
-        success {
-            echo "Pipeline succeeded! Image pushed to Docker Hub."
-        }
-    }
+  }
 }
